@@ -36,6 +36,7 @@ Run the built-in test suite:
 - Invalid commands are ignored, reported after the run, and still consume their position in the command sequence.
 - A boundary-rejected `F` is ignored and consumes its command; subsequent commands still execute.
 - A move into an occupied coordinate is a collision. The moving car and the occupied car freeze at their last safe coordinates. The simulation continues for every unaffected car.
+- A stationary car is still a collision participant when another car attempts to enter its coordinate. For example, if A at `(1,2)` faces North and C is stationary at `(1,3)`, A's `F` collides at `(1,3)`; A remains at `(1,2)`, C remains at `(1,3)`, and C's own command is not executed because both cars are frozen.
 - Frozen cars remain obstacles. A car that later attempts to enter their coordinate also freezes.
 - Starting overlaps are rejected when a car is added. Names are unique without regard to case.
 - Each call to run uses the original immutable car plans, and each script invocation compiles into a fresh temporary directory. No application state is persisted.

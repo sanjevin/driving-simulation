@@ -17,6 +17,7 @@ final class SimulationEngineTest {
         suite.test("single car follows the supplied scenario", SimulationEngineTest::singleCarScenario);
         suite.test("supplied multi-car scenario freezes both cars", SimulationEngineTest::suppliedMultiCarScenario);
         suite.test("collision freezes only involved cars", SimulationEngineTest::collisionAndContinuation);
+        suite.test("a stationary occupant freezes when another car hits it", SimulationEngineTest::stationaryOccupantIsFrozen);
         suite.test("boundary F is ignored but following commands run", SimulationEngineTest::boundaryThenTurn);
         suite.test("all four field boundaries reject forward movement", SimulationEngineTest::allBoundaries);
         suite.test("invalid commands are ignored and reported", SimulationEngineTest::invalidCommand);
@@ -56,6 +57,18 @@ final class SimulationEngineTest {
         Assertions.car(result, "B", new Position(1, 0), Direction.W, CarStatus.CRASHED);
         Assertions.car(result, "C", new Position(3, 2), Direction.E, CarStatus.COMPLETED);
         Assertions.collision(result, 1, "A", "B", new Position(1, 0));
+    }
+
+    private static void stationaryOccupantIsFrozen() {
+        SimulationSession session = new SimulationSession(new Field(3, 5));
+        add(session, "A", 1, 2, Direction.N, "F");
+        add(session, "C", 1, 3, Direction.N, "F");
+
+        SimulationResult result = session.run();
+
+        Assertions.car(result, "A", new Position(1, 2), Direction.N, CarStatus.CRASHED);
+        Assertions.car(result, "C", new Position(1, 3), Direction.N, CarStatus.CRASHED);
+        Assertions.collision(result, 1, "A", "C", new Position(1, 3));
     }
 
     private static void boundaryThenTurn() {
